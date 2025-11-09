@@ -6,8 +6,8 @@ public class Main {
     public static void main(String[] args) {
 
         NumeroOculto numoc = new NumeroOculto();
-
         Thread[] hilos = new Thread[NUM_HILOS];
+
         // Crea uno a uno los hilos. Cada hilo creado lo arranca y luego lo mete en el array hilos
         // Cada hilo generará un valor aleatorio y usará el objeto de la clase NumeroOculto para saber
         // si su número es el número oculto

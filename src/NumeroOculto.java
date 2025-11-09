@@ -28,7 +28,11 @@ public class NumeroOculto {
      *  0 en otro caso.
      *
      */
-    public int propuestaNumero(int num) {
+    public int propuestaNumero(int num, int idPartidaHilo) {
+        if (idPartidaHilo != this.id) {
+            return -1; // Hilo intentando jugar en una partida antigua
+        }
+
         if(this.adivinado) {
             // el juego ya ha terminado porque algún hilo ha adivinado el número
             return -1;
