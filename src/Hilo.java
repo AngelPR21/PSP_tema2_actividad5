@@ -14,7 +14,7 @@ class Hilo implements Runnable {
         this.numeroOculto = numeroOculto;
     }
     @Override
-    public void run() {
+    public void run() { // run es lo que ejecuta el hilo cada vez
         // genera un numero entre 0 y 100 (sin incluir el 100)
         Random r = new Random();
         int idPartidaHilo = numeroOculto.obtenerIDPartida(); // cada hilo lleva su ID
