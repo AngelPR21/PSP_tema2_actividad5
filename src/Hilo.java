@@ -14,42 +14,35 @@ class Hilo implements Runnable {
         this.numeroOculto = numeroOculto;
     }
     @Override
-    public void run() { // run es lo que ejecuta el hilo cada vez
-        // genera un numero entre 0 y 100 (sin incluir el 100)
+    public void run() {
         Random r = new Random();
-        int idPartidaHilo = numeroOculto.obtenerIDPartida(); // cada hilo lleva su ID
 
-        while(true) {
-            // el siguiente bloque synchronized bloquea toda la transacción
+        while (true) {
+            int partidaActual = numeroOculto.obtenerIDPartida();
+            //Bernardo si lees esto: Si meto esta linea en syncronized no deberia de dar fallo por partida antigua no? Ya que solo un hilo podria ejecutarlo a la vez
+            //La he puesto fuera porque el ejercicio dice que podria pasar que un hilo juegue una partida anterior
+            synchronized (numeroOculto) {
 
-            synchronized(this.numeroOculto) {
+
                 int numero = r.nextInt(100);
-
-                // comprueba si es el numero oculto
-                System.out.printf("Hilo %d (Partida %d). Voy a probar %d.\n", this.idhilo, idPartidaHilo, numero);
-                int resp = this.numeroOculto.propuestaNumero(numero,idPartidaHilo);
+                System.out.printf("Hilo %d (Partida %d). Propongo %d\n", idhilo, partidaActual, numero);
+                int resp = numeroOculto.propuestaNumero(numero, partidaActual);
 
                 if (resp == -1) {
-                    //Hilo estaba en otra partida
-                    idPartidaHilo = numeroOculto.obtenerIDPartida(); // actualiza a la partida actual
-                    System.out.printf("Hilo %d Partida antigua, ahora jugando en %d\n", idhilo, idPartidaHilo);
-
+                    System.out.printf("Hilo %d. La partida %d ya terminó, paso a la siguiente.\n", idhilo, partidaActual);
                 } else if (resp == 1) {
-                    System.out.printf("Hilo %d. *** EL NÚMERO %d SÍ ES EL NÚMERO OCULTO ***\n", this.idhilo,numero,idPartidaHilo);
-                    continue;
+                    System.out.printf("Hilo %d. El número %d es el número oculto en la partida %d\n",
+                            idhilo, numero, partidaActual);
                 } else if (resp == 0) {
-                    System.out.printf("Hilo %d. %d no es.\n", this.idhilo, numero,idPartidaHilo);
-                } else {
-                    System.out.printf("Hilo %d. Respuesta desconocida %d.\n", this.idhilo, resp);
-                    continue;
+                    System.out.printf("Hilo %d. %d no es el número oculto (Partida %d).\n", idhilo, numero, partidaActual);
                 }
+
             }
-            // esta pausa entre intentos permite que otros hilos hagan sus intentos
-            // es una pausa de "cortesia"
+
             try {
-                Thread.sleep(1);
-            } catch(InterruptedException e) {
-                System.out.printf("Hilo %d. Pausa interrumpida.\n", this.idhilo);
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                System.out.printf("Hilo %d interrumpido.\n", idhilo);
             }
         }
     }
